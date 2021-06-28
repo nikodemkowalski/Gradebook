@@ -1,9 +1,9 @@
 grades = {}
 grade_list = []
-key = grades.keys()
+subjects = grades.keys()
 
 
-def decorator(func):
+def separate(func):
     def wrapp():
         print('=======================')
         func()
@@ -12,60 +12,35 @@ def decorator(func):
 
 
 def add_subject():
-    print(F'Lista przedmiotów:{list(key)}')
-    i = input('Wpisz nazwę przedmiotu: ')
+    i = input('Wpisz nazwę przedmiotu: ').capitalize()
     if i in grades:
         print('Podany przedmiot już istnieje!')
-
     else:
         grades[i] = 'BO'
         print(F'Pomyślnie dodano nowy przedmiot! - {i}\n')
 
 
-def add_grade():
+def collect_grade():
     while True:
         grade_input = int(input('Wpisz ocenę: '))
         if 1 <= grade_input <= 6:
             grade_list.append(grade_input)
-
         elif grade_input == 0:
             return grade_list
-
         else:
             print('Nie ma takiej oceny!')
             continue
 
 
-def add_grades(add_grade):
-    print('Lista przedmiotów:', list(key))
+def assign_grades():
+    print('Lista przedmiotów:', subjects)
     i = input('Wybierz przedmiot: ')
-    add_grade()
+    collect_grade()
     grades[i] = grade_list
+    print(grade_list)
 
 
-def check_subject():
-    print(key)
-    i = str(input('Wybierz przedmiot: '))
-    if i in grades:
-        print(grades[i])
-    else:
-        print('Nie znaleziono przedmiotu')
-
-
-def avarage_grades(func):
-    print(key)
-    i = input('Wybierz przedmiot: ')
-    if i in grades:
-        value = list(grades[i])
-        result = sum(value) / len(value)
-        print(result)
-
-    else:
-        print('Wpisz poprawną nazwe przedmitu')
-        func()
-
-
-def pick(func):
+def continue_inquiry(func):
     print('Czy chcesz kontynuować?: Y/N')
     i = str(input().upper())
     if i == 'N':
@@ -76,10 +51,10 @@ def pick(func):
 
     else:
         print('Wybierz z posród podanych!\n')
-        pick(func)
+        continue_inquiry(func)
 
 
-@decorator
+@separate
 def menu():
     print('Dziennik elektroniczny\n'.upper())
     print('1. Dodaj przedmiot')
@@ -88,37 +63,45 @@ def menu():
     print('0. Wyjdz')
 
 
-@decorator
+@separate
 def menu_grades():
     print('\nOceny\n'.upper())
     print('1. Średnia ocen')
     print('2. Oceny cząstkowe')
 
 
-def subject():
-    print('\nDodaj przedmiot\n'.upper())
-    add_subject()
-    pick(subject)
-
-
-def grade():
-    print('\nDodaj oceny\n'.upper())
-    add_grades(add_grade)
-    pick(grade)
-
-
-def check():
+def check_grades():
     menu_grades()
-    insert = int(input('Wybierz pozycje'))
+    insert = int(input('Wybierz pozycje: '))
     if insert == 1:
-        avarage_grades(check_subject)
+        avarage_grades()
 
     elif insert == 2:
         check_subject()
 
     else:
         print('Niepoprawne dane!')
-    pick(check_subject)
+
+
+def check_subject():
+    print(subjects)
+    i = str(input('Wybierz przedmiot: '))
+    if i in grades:
+        print(grades[i])
+    else:
+        print('Nie znaleziono przedmiotu')
+
+
+def calculate_avarage():
+    print(subjects)
+    i = input('Wybierz przedmiot: ')
+    if i in grades:
+        value = list(grades[i])
+        print(sum(value) / len(value))
+
+    else:
+        print('Wpisz poprawną nazwe przedmitu')
+        check_subject()
 
 
 def main_loop():
@@ -126,14 +109,19 @@ def main_loop():
     menu()
     while insert != 0:
         if insert == 1:
-            subject()
+            print('\nDodaj przedmiot\n'.upper())
+            print(F'Lista przedmiotów:{subjects}')
+            add_subject()
+            continue_inquiry(add_subject)
 
         if insert == 2:
-            grade()
+            print('\nDodaj oceny\n'.upper())
+            calculate_avarage()
+            continue_inquiry(assign_grades)
 
         if insert == 3:
-            check()
-
+            check_grades()
+            continue_inquiry(check_grades)
         try:
             insert = int(input('Wybierz pozycje: '))
             if insert >= 4:
